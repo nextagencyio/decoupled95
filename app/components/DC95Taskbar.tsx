@@ -113,7 +113,7 @@ export default function DC95Taskbar() {
       {shutdownOpen && (
         <div className="fixed inset-0 z-[10001] flex items-center justify-center bg-black/30">
           <div
-            className="bg-[#c0c0c0] min-w-[400px]"
+            className="bg-[#c0c0c0] w-[90vw] max-w-[400px]"
             style={{
               border: '2px solid',
               borderColor: '#ffffff #000000 #000000 #ffffff',

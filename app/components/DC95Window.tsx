@@ -22,6 +22,14 @@ export default function DC95Window({
 }: DC95WindowProps) {
   const router = useRouter()
   const [isMaximized, setIsMaximized] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 640)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
 
   const handleClose = () => {
     if (onClose) {
@@ -51,17 +59,19 @@ export default function DC95Window({
       style={{
         border: '2px solid',
         borderColor: '#ffffff #000000 #000000 #ffffff',
-        boxShadow: isMaximized
+        boxShadow: isMaximized || isMobile
           ? 'none'
           : 'inset -1px -1px 0 #808080, inset 1px 1px 0 #ffffff, 6px 6px 0 rgba(0,0,0,0.25)',
         ...(isMaximized
           ? {}
-          : {
-              top: '30px',
-              left: '60px',
-              right: '60px',
-              bottom: '70px',
-            }),
+          : isMobile
+            ? { top: 0, left: 0, right: 0, bottom: '40px' }
+            : {
+                top: '30px',
+                left: '60px',
+                right: '60px',
+                bottom: '70px',
+              }),
       }}
     >
       {/* Title Bar */}

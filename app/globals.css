@@ -134,6 +134,7 @@
   font-family: 'Tahoma', 'Arial', sans-serif;
   font-size: 14px;
   display: flex;
+  flex-wrap: wrap;
   gap: 0;
   border-bottom: 1px solid var(--dc95-btn-shadow);
 }

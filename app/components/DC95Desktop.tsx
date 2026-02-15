@@ -85,10 +85,10 @@ const desktopIcons: DesktopIcon[] = [
 export default function DC95Desktop() {
   return (
     <div
-      className="fixed inset-0 bottom-[40px] overflow-hidden p-6"
+      className="fixed inset-0 bottom-[40px] overflow-hidden p-3 sm:p-6"
       style={{ background: '#008080' }}
     >
-      <div className="flex flex-col flex-wrap gap-8 h-full content-start">
+      <div className="flex flex-col flex-wrap gap-4 sm:gap-8 h-full content-start">
         {desktopIcons.map((icon) => (
           <Link
             key={icon.label}

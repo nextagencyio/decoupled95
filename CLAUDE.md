@@ -1078,6 +1078,64 @@ curl -s -o /dev/null -w "%{http_code}" "https://images.unsplash.com/photo-XXXX?w
 3. Never mix real URLs and placeholders across content items of the same type
 4. If using Unsplash, add `images.unsplash.com` to `next.config.js` `remotePatterns`
 
+### ALWAYS Include ALL Content Types in a Single Import — Field Ordering Matters
+
+**Problem**: When importing content across multiple import calls, fields defined in later imports don't exist when content is created in earlier imports. This causes field data (especially images) to be silently dropped.
+
+**Symptoms**:
+- Content is created successfully (no errors or warnings)
+- Image fields return `null` in GraphQL even though image URIs were provided in the import
+- Other custom fields may also be missing from imported content
+- No error messages indicate anything went wrong
+
+**Example of the problem**:
+```
+# WRONG — Two separate imports
+# Import 1: Create homepage type + all content (articles, pages, homepage)
+import_content({
+  model: [{ bundle: "homepage", fields: [...] }],
+  content: [
+    { type: "node.article", values: { image: { uri: "https://..." } } },  // image field doesn't exist yet!
+    { type: "node.homepage", values: { ... } }
+  ]
+})
+
+# Import 2: Add article type with image field
+import_content({
+  model: [{ bundle: "article", fields: [{ id: "image", type: "image" }] }],
+  content: []
+})
+# Result: Articles exist but have null images — the image data was lost
+
+# CORRECT — Single import with ALL types in model
+import_content({
+  model: [
+    { bundle: "article", fields: [{ id: "image", type: "image" }] },
+    { bundle: "page", fields: [] },
+    { bundle: "homepage", fields: [...] },
+    { entity: "paragraph", bundle: "feature_item", fields: [...] }
+  ],
+  content: [
+    { type: "paragraph.feature_item", values: { ... } },
+    { type: "node.homepage", values: { ... } },
+    { type: "node.article", values: { image: { uri: "https://..." } } },  // field exists now!
+    { type: "node.page", values: { ... } }
+  ]
+})
+# Result: All content created with images properly attached
+```
+
+**Root Cause**: DC Import processes the `model` array first (creating types and fields), then processes the `content` array. If a content type isn't in the model, its fields may not exist when content is created, causing field data to be silently ignored.
+
+**Solution**: Always include ALL content types in a single import's `model` array — even pre-existing types like `article` and `page`. This ensures:
+1. All fields are created/configured before any content is imported
+2. GraphQL Compose is configured for all types in one pass
+3. Image downloads happen successfully because the image field exists
+
+**Import Order Best Practice**:
+1. `model` array: Define ALL content types (paragraph types first, then node types)
+2. `content` array: Paragraphs first (so they can be referenced), then nodes
+
 ### Parallelize Space Provisioning with Frontend Work
 
 **Problem**: Newly created spaces take 90-100 seconds to provision. Waiting idle during this time is wasteful.

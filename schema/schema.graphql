@@ -1,15 +1,15 @@
 """The schema's entry-point for queries."""
 type Query {
-  """Load a Node entity by id."""
-  node(
-    """The id of the Node to load."""
+  """Load a Term entity by id."""
+  term(
+    """The id of the Term to load."""
     id: ID!
 
     """
     Optionally set the revision of the entity. Eg current, latest, or an ID.
     """
     revision: ID
-  ): NodeUnion
+  ): TermUnion
 
   """Load a Paragraph entity by id."""
   paragraph(
@@ -22,16 +22,16 @@ type Query {
     revision: ID
   ): ParagraphUnion
 
-  """Load a Term entity by id."""
-  term(
-    """The id of the Term to load."""
+  """Load a Node entity by id."""
+  node(
+    """The id of the Node to load."""
     id: ID!
 
     """
     Optionally set the revision of the entity. Eg current, latest, or an ID.
     """
     revision: ID
-  ): TermUnion
+  ): NodeUnion
 
   """Load a Menu by name."""
   menu(
@@ -39,19 +39,50 @@ type Query {
     name: MenuAvailable!
   ): Menu
 
-  """Load a User entity by id."""
-  user(
-    """The id of the User to load."""
-    id: ID!
-  ): User
-
-  """
-  Get information about the currently authenticated user. NULL if not logged in.
-  """
-  viewer: User
-
   """Schema information."""
   info: SchemaInformation!
+
+  """List of all TermTag on the platform."""
+  termTags(
+    """Returns the elements that come after the specified cursor."""
+    after: Cursor
+
+    """Returns the elements that come before the specified cursor."""
+    before: Cursor
+
+    """Returns up to the first n elements from the list."""
+    first: Int
+
+    """Returns up to the last n elements from the list."""
+    last: Int
+
+    """Reverse the order of the underlying list."""
+    reverse: Boolean = false
+
+    """Sort the underlying list by the given key."""
+    sortKey: ConnectionSortKeys
+  ): TermTagConnection!
+
+  """List of all ParagraphFeatureItem on the platform."""
+  paragraphFeatureItems(
+    """Returns the elements that come after the specified cursor."""
+    after: Cursor
+
+    """Returns the elements that come before the specified cursor."""
+    before: Cursor
+
+    """Returns up to the first n elements from the list."""
+    first: Int
+
+    """Returns up to the last n elements from the list."""
+    last: Int
+
+    """Reverse the order of the underlying list."""
+    reverse: Boolean = false
+
+    """Sort the underlying list by the given key."""
+    sortKey: ConnectionSortKeys
+  ): ParagraphFeatureItemConnection!
 
   """List of all NodeArticle on the platform."""
   nodeArticles(
@@ -116,27 +147,6 @@ type Query {
     sortKey: ConnectionSortKeys
   ): NodePageConnection!
 
-  """List of all TermTag on the platform."""
-  termTags(
-    """Returns the elements that come after the specified cursor."""
-    after: Cursor
-
-    """Returns the elements that come before the specified cursor."""
-    before: Cursor
-
-    """Returns up to the first n elements from the list."""
-    first: Int
-
-    """Returns up to the last n elements from the list."""
-    last: Int
-
-    """Reverse the order of the underlying list."""
-    reverse: Boolean = false
-
-    """Sort the underlying list by the given key."""
-    sortKey: ConnectionSortKeys
-  ): TermTagConnection!
-
   """Load a Route by path."""
   route(
     """Internal path to load. Eg /about"""
@@ -147,290 +157,6 @@ type Query {
     """
     revision: ID
   ): RouteUnion
-}
-
-"""Entity type node."""
-union NodeUnion = NodeArticle | NodeHomepage | NodePage
-
-"""
-Use <em>articles</em> for time-sensitive content like news, press releases or blog posts.
-"""
-type NodeArticle implements NodeInterface & EdgeNode {
-  """The entity ID."""
-  id: ID!
-
-  """The Universally Unique IDentifier (UUID)."""
-  uuid: ID!
-
-  """The author of this content."""
-  author: User
-
-  """Body"""
-  body: TextSummary
-
-  """The time that the node was last edited."""
-  changed: DateTime!
-
-  """The date and time that the content was created."""
-  created: DateTime!
-
-  """Image"""
-  image: Image
-
-  """Language"""
-  langcode: Language!
-
-  """URL alias"""
-  path: String
-
-  """Promoted to front page"""
-  promote: Boolean!
-
-  """Published"""
-  status: Boolean!
-
-  """Sticky at top of lists"""
-  sticky: Boolean!
-
-  """
-  Enter a comma-separated list. For example: Amsterdam, Mexico City, "Cleveland, Ohio"
-  """
-  tags: [TermUnion!]
-
-  """Title"""
-  title: String!
-}
-
-"""Entity type node."""
-interface NodeInterface {
-  """The entity ID."""
-  id: ID!
-
-  """The Universally Unique IDentifier (UUID)."""
-  uuid: ID!
-
-  """The author of this content."""
-  author: User
-
-  """The time that the node was last edited."""
-  changed: DateTime!
-
-  """The date and time that the content was created."""
-  created: DateTime!
-
-  """Language"""
-  langcode: Language!
-
-  """URL alias"""
-  path: String
-
-  """Promoted to front page"""
-  promote: Boolean!
-
-  """Published"""
-  status: Boolean!
-
-  """Sticky at top of lists"""
-  sticky: Boolean!
-
-  """Title"""
-  title: String!
-}
-
-"""Entity type user."""
-type User implements UserInterface {
-  """The entity ID."""
-  id: ID!
-
-  """The Universally Unique IDentifier (UUID)."""
-  uuid: ID!
-
-  """The time that the user was last edited."""
-  changed: DateTime!
-
-  """The time that the user was created."""
-  created: DateTime!
-
-  """The email of this user."""
-  mail: Email
-
-  """The name of this user."""
-  name: String!
-
-  """The roles the user has."""
-  roles: [UserRoles!]
-
-  """Whether the user is active or blocked."""
-  status: UserStatus!
-}
-
-"""Entity type user."""
-interface UserInterface {
-  """The entity ID."""
-  id: ID!
-
-  """The Universally Unique IDentifier (UUID)."""
-  uuid: ID!
-
-  """The time that the user was last edited."""
-  changed: DateTime!
-
-  """The time that the user was created."""
-  created: DateTime!
-
-  """The email of this user."""
-  mail: Email
-
-  """The name of this user."""
-  name: String!
-
-  """The roles the user has."""
-  roles: [UserRoles!]
-
-  """Whether the user is active or blocked."""
-  status: UserStatus!
-}
-
-"""A DateTime object."""
-type DateTime {
-  """
-  Type represents date and time as number of milliseconds from start of the UNIX epoch.
-  """
-  timestamp: Timestamp!
-
-  """A field whose value exists in the standard IANA Time Zone Database."""
-  timezone: TimeZone!
-
-  """A string that will have a value of format ±hh:mm"""
-  offset: UtcOffset!
-
-  """RFC 3339 compliant time string."""
-  time: Time!
-}
-
-"""
-Type represents date and time as number of milliseconds from start of the UNIX epoch.
-"""
-scalar Timestamp
-
-"""A field whose value exists in the standard IANA Time Zone Database."""
-scalar TimeZone
-
-"""A string that will have a value of format ±hh:mm"""
-scalar UtcOffset
-
-"""RFC 3339 compliant time string."""
-scalar Time
-
-"""An email address."""
-scalar Email
-
-"""User roles."""
-scalar UserRoles
-
-"""Whether the user is active or blocked."""
-enum UserStatus {
-  """An active user is able to login on the platform and view content"""
-  ACTIVE
-
-  """
-  A blocked user is unable to access the platform, although their content will still be visible until it's deleted.
-  """
-  BLOCKED
-}
-
-"""A language definition provided by the CMS."""
-type Language {
-  """The language code."""
-  id: ID
-
-  """The language name."""
-  name: String
-
-  """The language direction."""
-  direction: String
-}
-
-"""This entity is accessible over an Edge connection."""
-interface EdgeNode {
-  id: ID!
-}
-
-"""A processed text format with summary defined by the CMS."""
-type TextSummary {
-  """The raw text value."""
-  value: String
-
-  """The processed text value."""
-  processed: Html
-
-  """The text format used to process the text value."""
-  format: String
-
-  """The processed text summary."""
-  summary: Html
-}
-
-"""
-An HTML string
-
-Content of this type is deemed safe by the server for raw output given the
-origin and the context of its usage. The HTML can still contain scripts or style
-tags where the creating user had permission to input these.
-"""
-scalar Html
-
-"""A image object to represent an managed file."""
-type Image {
-  """The URL of the image."""
-  url: String!
-
-  """The width of the image."""
-  width: Int!
-
-  """The height of the image."""
-  height: Int!
-
-  """The alt text of the image."""
-  alt: String
-
-  """The title text of the image."""
-  title: String
-
-  """The size of the image in bytes."""
-  size: Int!
-
-  """The mime type of the image."""
-  mime: String
-
-  """Image variations control different sizes and formats for images."""
-  variations(styles: [ImageStyleAvailable]): [ImageStyleDerivative!]
-}
-
-"""List of image styles available to use."""
-enum ImageStyleAvailable {
-  """Large (480×480)"""
-  LARGE
-
-  """Media Library thumbnail (220×220)"""
-  MEDIA_LIBRARY
-
-  """Medium (220×220)"""
-  MEDIUM
-
-  """Thumbnail (100×100)"""
-  THUMBNAIL
-
-  """Wide (1090)"""
-  WIDE
-}
-
-"""ImageStyle derivatives for an Image."""
-type ImageStyleDerivative {
-  name: String!
-  url: String!
-  width: Int!
-  height: Int!
 }
 
 """Entity type taxonomy_term."""
@@ -502,6 +228,37 @@ interface TermInterface {
   weight: Int!
 }
 
+"""A DateTime object."""
+type DateTime {
+  """
+  Type represents date and time as number of milliseconds from start of the UNIX epoch.
+  """
+  timestamp: Timestamp!
+
+  """A field whose value exists in the standard IANA Time Zone Database."""
+  timezone: TimeZone!
+
+  """A string that will have a value of format ±hh:mm"""
+  offset: UtcOffset!
+
+  """RFC 3339 compliant time string."""
+  time: Time!
+}
+
+"""
+Type represents date and time as number of milliseconds from start of the UNIX epoch.
+"""
+scalar Timestamp
+
+"""A field whose value exists in the standard IANA Time Zone Database."""
+scalar TimeZone
+
+"""A string that will have a value of format ±hh:mm"""
+scalar UtcOffset
+
+"""RFC 3339 compliant time string."""
+scalar Time
+
 """A processed text format defined by the CMS."""
 type Text {
   """The raw text value."""
@@ -515,96 +272,36 @@ type Text {
 }
 
 """
-A structured homepage content type with hero section, features, and call-to-action areas.
+An HTML string
+
+Content of this type is deemed safe by the server for raw output given the
+origin and the context of its usage. The HTML can still contain scripts or style
+tags where the creating user had permission to input these.
 """
-type NodeHomepage implements NodeInterface & EdgeNode {
-  """The entity ID."""
-  id: ID!
+scalar Html
 
-  """The Universally Unique IDentifier (UUID)."""
-  uuid: ID!
+"""A language definition provided by the CMS."""
+type Language {
+  """The language code."""
+  id: ID
 
-  """The author of this content."""
-  author: User
+  """The language name."""
+  name: String
 
-  """The time that the node was last edited."""
-  changed: DateTime!
-
-  """The date and time that the content was created."""
-  created: DateTime!
-
-  """Description for the call-to-action section"""
-  ctaDescription: Text
-
-  """Primary button in the call-to-action section"""
-  ctaPrimary: Link
-
-  """Secondary button in the call-to-action section"""
-  ctaSecondary: Link
-
-  """Title for the call-to-action section"""
-  ctaTitle: String
-
-  """Individual feature items with structured content"""
-  featuresItems: [ParagraphUnion!]
-
-  """Subtitle for the features section"""
-  featuresSubtitle: Text
-
-  """Title for the features section"""
-  featuresTitle: String
-
-  """The description text displayed in the hero section"""
-  heroDescription: Text
-
-  """The subtitle displayed in the hero section"""
-  heroSubtitle: String
-
-  """The main title displayed in the hero section"""
-  heroTitle: String
-
-  """Language"""
-  langcode: Language!
-
-  """URL alias"""
-  path: String
-
-  """Primary call-to-action button"""
-  primaryCta: Link
-
-  """Promoted to front page"""
-  promote: Boolean!
-
-  """Secondary call-to-action button"""
-  secondaryCta: Link
-
-  """Published"""
-  status: Boolean!
-
-  """Sticky at top of lists"""
-  sticky: Boolean!
-
-  """Title"""
-  title: String!
+  """The language direction."""
+  direction: String
 }
 
-"""A link."""
-type Link {
-  """The title of the link."""
-  title: String
-
-  """The URL of the link."""
-  url: String
-
-  """Whether the link is internal to this website."""
-  internal: Boolean!
+"""This entity is accessible over an Edge connection."""
+interface EdgeNode {
+  id: ID!
 }
 
 """Entity type paragraph."""
 union ParagraphUnion = ParagraphFeatureItem
 
-"""A feature item with title and description for marketing pages"""
-type ParagraphFeatureItem implements ParagraphInterface {
+"""Individual feature with title, description, and icon"""
+type ParagraphFeatureItem implements ParagraphInterface & EdgeNode {
   """The entity ID."""
   id: ID!
 
@@ -614,24 +311,20 @@ type ParagraphFeatureItem implements ParagraphInterface {
   """The time that the Paragraph was created."""
   created: DateTime!
 
-  """The description of this feature"""
-  featureDescription: Text!
+  """Description"""
+  description: Text
 
-  """
-  Enter the name of a Lucide icon (e.g., "database", "zap", "shield"). Browse
-  available icons at <a href="https://lucide.dev/icons/"
-  target="_blank">https://lucide.dev/icons/</a>
-  """
-  featureIcon: String
-
-  """The title of this feature"""
-  featureTitle: String!
+  """Icon"""
+  icon: String
 
   """The paragraphs entity language code."""
   langcode: Language!
 
   """Published"""
   status: Boolean!
+
+  """Title"""
+  title: String
 }
 
 """Entity type paragraph."""
@@ -652,18 +345,219 @@ interface ParagraphInterface {
   status: Boolean!
 }
 
-"""
-Use <em>basic pages</em> for your static content, such as an 'About us' page.
-"""
-type NodePage implements NodeInterface & EdgeNode {
+"""Entity type node."""
+union NodeUnion = NodeArticle | NodeHomepage | NodePage
+
+"""Article content type with image"""
+type NodeArticle implements NodeInterface & EdgeNode {
   """The entity ID."""
   id: ID!
 
   """The Universally Unique IDentifier (UUID)."""
   uuid: ID!
 
-  """The author of this content."""
-  author: User
+  """Body"""
+  body: TextSummary
+
+  """The time that the node was last edited."""
+  changed: DateTime!
+
+  """The date and time that the content was created."""
+  created: DateTime!
+
+  """Image"""
+  image: Image
+
+  """Language"""
+  langcode: Language!
+
+  """URL alias"""
+  path: String
+
+  """Promoted to front page"""
+  promote: Boolean!
+
+  """Published"""
+  status: Boolean!
+
+  """Sticky at top of lists"""
+  sticky: Boolean!
+
+  """Title"""
+  title: String!
+}
+
+"""Entity type node."""
+interface NodeInterface {
+  """The entity ID."""
+  id: ID!
+
+  """The Universally Unique IDentifier (UUID)."""
+  uuid: ID!
+
+  """The time that the node was last edited."""
+  changed: DateTime!
+
+  """The date and time that the content was created."""
+  created: DateTime!
+
+  """Language"""
+  langcode: Language!
+
+  """URL alias"""
+  path: String
+
+  """Promoted to front page"""
+  promote: Boolean!
+
+  """Published"""
+  status: Boolean!
+
+  """Sticky at top of lists"""
+  sticky: Boolean!
+
+  """Title"""
+  title: String!
+}
+
+"""A processed text format with summary defined by the CMS."""
+type TextSummary {
+  """The raw text value."""
+  value: String
+
+  """The processed text value."""
+  processed: Html
+
+  """The text format used to process the text value."""
+  format: String
+
+  """The processed text summary."""
+  summary: Html
+}
+
+"""A image object to represent an managed file."""
+type Image {
+  """The URL of the image."""
+  url: String!
+
+  """The width of the image."""
+  width: Int!
+
+  """The height of the image."""
+  height: Int!
+
+  """The alt text of the image."""
+  alt: String
+
+  """The title text of the image."""
+  title: String
+
+  """The size of the image in bytes."""
+  size: Int!
+
+  """The mime type of the image."""
+  mime: String
+
+  """Image variations control different sizes and formats for images."""
+  variations(styles: [ImageStyleAvailable]): [ImageStyleDerivative!]
+}
+
+"""List of image styles available to use."""
+enum ImageStyleAvailable {
+  """Large (480×480)"""
+  LARGE
+
+  """Media Library thumbnail (220×220)"""
+  MEDIA_LIBRARY
+
+  """Medium (220×220)"""
+  MEDIUM
+
+  """Thumbnail (100×100)"""
+  THUMBNAIL
+
+  """Wide (1090)"""
+  WIDE
+}
+
+"""ImageStyle derivatives for an Image."""
+type ImageStyleDerivative {
+  name: String!
+  url: String!
+  width: Int!
+  height: Int!
+}
+
+"""Homepage content with hero, features, and CTA sections"""
+type NodeHomepage implements NodeInterface & EdgeNode {
+  """The entity ID."""
+  id: ID!
+
+  """The Universally Unique IDentifier (UUID)."""
+  uuid: ID!
+
+  """The time that the node was last edited."""
+  changed: DateTime!
+
+  """The date and time that the content was created."""
+  created: DateTime!
+
+  """CTA Description"""
+  ctaDescription: Text
+
+  """CTA Primary Text"""
+  ctaPrimary: String
+
+  """CTA Secondary Text"""
+  ctaSecondary: String
+
+  """CTA Title"""
+  ctaTitle: String
+
+  """Features Items"""
+  featuresItems: [ParagraphUnion!]
+
+  """Features Subtitle"""
+  featuresSubtitle: String
+
+  """Features Title"""
+  featuresTitle: String
+
+  """Hero Description"""
+  heroDescription: Text
+
+  """Hero Subtitle"""
+  heroSubtitle: String
+
+  """Hero Title"""
+  heroTitle: String
+
+  """Language"""
+  langcode: Language!
+
+  """URL alias"""
+  path: String
+
+  """Promoted to front page"""
+  promote: Boolean!
+
+  """Published"""
+  status: Boolean!
+
+  """Sticky at top of lists"""
+  sticky: Boolean!
+
+  """Title"""
+  title: String!
+}
+
+"""Basic page content type"""
+type NodePage implements NodeInterface & EdgeNode {
+  """The entity ID."""
+  id: ID!
+
+  """The Universally Unique IDentifier (UUID)."""
+  uuid: ID!
 
   """Body"""
   body: TextSummary
@@ -797,6 +691,18 @@ interface Route {
   internal: Boolean!
 }
 
+"""A link."""
+type Link {
+  """The title of the link."""
+  title: String
+
+  """The URL of the link."""
+  url: String
+
+  """Whether the link is internal to this website."""
+  internal: Boolean!
+}
+
 """A list of possible entities that can be returned by URL."""
 union RouteEntityUnion = NodeArticle | NodeHomepage | NodePage
 
@@ -851,10 +757,10 @@ enum ConnectionSortKeys {
   WEIGHT
 }
 
-"""A paginated set of results for NodeArticle."""
-type NodeArticleConnection implements Connection {
-  edges: [NodeArticleEdge!]!
-  nodes: [NodeArticle!]!
+"""A paginated set of results for TermTag."""
+type TermTagConnection implements Connection {
+  edges: [TermTagEdge!]!
+  nodes: [TermTag!]!
   pageInfo: ConnectionPageInfo!
 }
 
@@ -896,6 +802,32 @@ type ConnectionPageInfo {
   endCursor: Cursor
 }
 
+"""Edge for TermTag."""
+type TermTagEdge implements Edge {
+  cursor: Cursor!
+  node: TermTag!
+}
+
+"""A paginated set of results for ParagraphFeatureItem."""
+type ParagraphFeatureItemConnection implements Connection {
+  edges: [ParagraphFeatureItemEdge!]!
+  nodes: [ParagraphFeatureItem!]!
+  pageInfo: ConnectionPageInfo!
+}
+
+"""Edge for ParagraphFeatureItem."""
+type ParagraphFeatureItemEdge implements Edge {
+  cursor: Cursor!
+  node: ParagraphFeatureItem!
+}
+
+"""A paginated set of results for NodeArticle."""
+type NodeArticleConnection implements Connection {
+  edges: [NodeArticleEdge!]!
+  nodes: [NodeArticle!]!
+  pageInfo: ConnectionPageInfo!
+}
+
 """Edge for NodeArticle."""
 type NodeArticleEdge implements Edge {
   cursor: Cursor!
@@ -928,19 +860,6 @@ type NodePageEdge implements Edge {
   node: NodePage!
 }
 
-"""A paginated set of results for TermTag."""
-type TermTagConnection implements Connection {
-  edges: [TermTagEdge!]!
-  nodes: [TermTag!]!
-  pageInfo: ConnectionPageInfo!
-}
-
-"""Edge for TermTag."""
-type TermTagEdge implements Edge {
-  cursor: Cursor!
-  node: TermTag!
-}
-
 """The schema's entry-point for mutations."""
 type Mutation {
   """Placeholder for mutation extension."""
@@ -953,24 +872,6 @@ type Subscription {
   _: Boolean!
 }
 
-"""Input for filter exposed with operator "between"."""
-input BetweenFloatInput {
-  """The minimum value of the range."""
-  min: Float
-
-  """The maximum value of the range."""
-  max: Float
-}
-
-"""Input for filter exposed with operator "between"."""
-input BetweenStringInput {
-  """The minimum value of the range."""
-  min: String
-
-  """The maximum value of the range."""
-  max: String
-}
-
 """A Date range has a start and an end."""
 type DateRange {
   """The start of the date range."""
@@ -979,6 +880,9 @@ type DateRange {
   """The end of the date range."""
   end: DateTime
 }
+
+"""An email address."""
+scalar Email
 
 """A file object to represent an managed file."""
 type File {
@@ -1051,104 +955,3 @@ type UnsupportedType {
 
 """Untyped structured data. Eg JSON, configuration, settings, attributes."""
 scalar UntypedStructuredData
-
-"""Entity type user."""
-union UserUnion = User
-
-"""Views represent collections of curated data from the CMS."""
-interface View {
-  """The ID of the view."""
-  id: ID!
-
-  """The machine name of the view."""
-  view: String!
-
-  """The machine name of the display."""
-  display: String!
-
-  """The language code of the view."""
-  langcode: String
-
-  """The human friendly label of the view."""
-  label: String
-
-  """The description of the view."""
-  description: String
-
-  """Information about the page in the view."""
-  pageInfo: ViewPageInfo!
-}
-
-"""Information about the page in a view."""
-type ViewPageInfo {
-  """Any result offset being used."""
-  offset: Int!
-
-  """The current page being returned."""
-  page: Int!
-
-  """How many results per page."""
-  pageSize: Int!
-
-  """How many results total."""
-  total: Int!
-}
-
-"""An exposed filter option for the view."""
-type ViewFilter {
-  """The filter identifier."""
-  id: ID!
-
-  """The filter plugin type."""
-  plugin: String!
-
-  """The filter element type."""
-  type: String!
-
-  """The filter operator."""
-  operator: String!
-
-  """The filter element label."""
-  label: String
-
-  """The filter element description."""
-  description: String
-
-  """Whether the filter is required."""
-  required: Boolean!
-
-  """Whether the filter allows multiple values."""
-  multiple: Boolean!
-
-  """The value for the filter. Could be an array for multiple values."""
-  value: UntypedStructuredData
-
-  """The filter element options if any are defined."""
-  options: UntypedStructuredData
-
-  """The filter element attributes."""
-  attributes: UntypedStructuredData!
-}
-
-"""A reference to an embedded view"""
-type ViewReference {
-  """The machine name of the view."""
-  view: String!
-
-  """The machine name of the display."""
-  display: String!
-
-  """The contextual filter values used."""
-  contextualFilter: [String!]
-
-  """How many results per page."""
-  pageSize: Int
-
-  """
-  The name of the query used to fetch the data, if the view is a GraphQL display.
-  """
-  query: String
-}
-
-"""All available view result types."""
-union ViewResultUnion = UnsupportedType

@@ -12,7 +12,7 @@ export default function Contact() {
       <div className="font-['Tahoma',_'Arial',_sans-serif] text-[14px]">
         {/* DC Mail style toolbar */}
         <div
-          className="flex items-center gap-1 px-2 py-1 bg-[#c0c0c0]"
+          className="flex flex-wrap items-center gap-1 px-2 py-1 bg-[#c0c0c0]"
           style={{
             borderBottom: '1px solid #808080',
           }}
@@ -86,7 +86,7 @@ export default function Contact() {
               </p>
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="block text-[14px] font-bold mb-1">First Name:</label>
                 <input
