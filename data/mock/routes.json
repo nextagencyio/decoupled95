@@ -2,7 +2,9 @@
   "/articles/welcome-to-decoupled-drupal": {
     "data": {
       "route": {
+        "__typename": "RouteInternal",
         "entity": {
+          "__typename": "NodeArticle",
           "id": "1",
           "title": "Welcome to Decoupled Drupal",
           "body": {
@@ -32,7 +34,9 @@
   "/articles/content-authoring-with-paragraphs": {
     "data": {
       "route": {
+        "__typename": "RouteInternal",
         "entity": {
+          "__typename": "NodeArticle",
           "id": "2",
           "title": "Content Authoring with Paragraphs",
           "body": {
@@ -62,7 +66,9 @@
   "/articles/getting-started-with-graphql": {
     "data": {
       "route": {
+        "__typename": "RouteInternal",
         "entity": {
+          "__typename": "NodeArticle",
           "id": "3",
           "title": "Getting Started with GraphQL",
           "body": {
@@ -92,7 +98,9 @@
   "/about": {
     "data": {
       "route": {
+        "__typename": "RouteInternal",
         "entity": {
+          "__typename": "NodePage",
           "id": "4",
           "title": "About Us",
           "body": {
